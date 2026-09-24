@@ -2,6 +2,8 @@
 
 A static site (no build step) covering 23 disc golf courses in the Greater Peoria, Illinois area. It includes filtering and sorting, a live map, course detail pages, and live weather.
 
+Available at: https://challacade.github.io/peoria-disc-golf/
+
 ## Development
 
 This site was created to test the capabilities of Claude Opus 5.5, prompted with:
