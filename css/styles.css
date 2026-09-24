@@ -520,6 +520,8 @@ p { text-wrap: pretty; }
 
 .footer { padding: 40px var(--gutter) 56px; text-align: center; color: var(--muted); border-top: 1px solid var(--line); }
 .footer p { margin: 4px 0; }
+.footer .oss { margin: 10px 0 14px; }
+.footer .oss a { color: var(--lime); font-weight: 600; text-underline-offset: 3px; }
 
 /* ==========================================================================
    Detail dialog
