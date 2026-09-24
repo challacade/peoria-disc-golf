@@ -39,6 +39,8 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
@@ -176,12 +178,12 @@ p { text-wrap: pretty; }
 .hero-content {
   position: relative; z-index: 2;
   width: 100%; max-width: 1320px; margin-inline: auto;
-  padding: clamp(20px, 6vh, 72px) var(--gutter) clamp(150px, 24vw, 330px);
+  padding: clamp(20px, 6vh, 72px) var(--gutter) clamp(150px, 15vw, 210px);
 }
 
 .hero h1 {
   margin: 0.18em 0 0.22em;
-  font-size: clamp(3.1rem, 10vw, 9rem);
+  font-size: clamp(3.1rem, min(7vw, 9vh), 6rem);
   font-weight: 800;
   line-height: 0.88;
   letter-spacing: -0.045em;
@@ -531,7 +533,7 @@ p { text-wrap: pretty; }
 .detail[open] { display: grid; place-items: center; opacity: 1; }
 .detail::backdrop {
   background: rgba(3, 6, 14, 0);
-  transition: background-color 0.3s, backdrop-filter 0.3s, overlay 0.3s allow-discrete, display 0.3s allow-discrete;
+  transition: background-color 0.45s, backdrop-filter 0.45s, overlay 0.45s allow-discrete, display 0.45s allow-discrete;
 }
 .detail[open]::backdrop { background: rgba(3, 6, 14, 0.74); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .detail-panel { transform: translateY(28px) scale(0.98); transition: transform 0.45s var(--ease-out); }
@@ -541,7 +543,7 @@ p { text-wrap: pretty; }
   .detail[open]::backdrop { background: rgba(3, 6, 14, 0); backdrop-filter: blur(0); }
   .detail[open] .detail-panel { transform: translateY(28px) scale(0.98); }
 }
-.detail.no-anim, .detail.no-anim::backdrop, .detail.no-anim .detail-panel { transition: none; }
+.detail.no-anim, .detail.no-anim .detail-panel { transition: none; }
 
 .detail-panel {
   position: relative;
@@ -560,7 +562,7 @@ p { text-wrap: pretty; }
   display: flex; justify-content: flex-end; align-items: center; gap: 6px;
   height: 0; padding: 0 12px; overflow: visible; pointer-events: none;
 }
-.detail-toolbar > * { pointer-events: auto; transform: translateY(32px); }
+.detail-toolbar > * { pointer-events: auto; translate: 0 32px; }
 .detail-toolbar .close { margin-left: 6px; }
 .detail-pos {
   padding: 6px 10px; border-radius: 999px; background: rgba(7, 11, 20, 0.66);
@@ -746,7 +748,8 @@ small.muted { font-size: 0.82rem; }
    ========================================================================== */
 
 ::view-transition-group(*) { animation-duration: 0.45s; animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1); }
-::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.3s; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.45s; }
+::view-transition-group(active-card) { z-index: 10; }
 ::view-transition-old(*.card), ::view-transition-new(*.card) { height: 100%; object-fit: cover; object-position: top; }
 
 /* ==========================================================================

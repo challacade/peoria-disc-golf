@@ -69,8 +69,9 @@ export function initHero() {
       land();
       return;
     }
-    const duration = 2300;
-    const ease = (x) => 1 - Math.pow(1 - x, 2.3);
+    const duration = 1900;
+    // Slight acceleration so the disc drives into the chains instead of drifting in.
+    const ease = (x) => 0.8 * x + 0.2 * x * x;
     let t0;
     const step = (ts) => {
       t0 ??= ts;

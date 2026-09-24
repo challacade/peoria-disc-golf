@@ -138,10 +138,15 @@ function cardHTML(c) {
 
 function buildCards() {
   results.innerHTML = COURSES.map(cardHTML).join('');
-  for (const el of $$('.card', results)) {
-    cards.set(el.dataset.id, el);
-    el.style.viewTransitionName = `card-${el.dataset.id}`;
-  }
+  for (const el of $$('.card', results)) cards.set(el.dataset.id, el);
+}
+
+// Cards carry view-transition names only while reordering, so a dialog morph animates a single layer.
+let reorderToken = 0;
+function nameCards(on) {
+  reorderToken += 1;
+  for (const [id, el] of cards) el.style.viewTransitionName = on ? `card-${id}` : '';
+  return reorderToken;
 }
 
 function renderDistances() {
@@ -199,8 +204,12 @@ function apply({ animate = true, fit = true } = {}) {
     map?.show(ids);
   };
 
-  if (animate && !unchanged && canTransition() && isInViewport(results)) document.startViewTransition(update);
-  else update();
+  if (animate && !unchanged && canTransition() && isInViewport(results)) {
+    const token = nameCards(true);
+    document.startViewTransition(update).finished.finally(() => {
+      if (token === reorderToken) nameCards(false);
+    });
+  } else update();
   if (fit && !unchanged) map?.fit(ids);
 }
 
@@ -419,14 +428,6 @@ async function loadWeather(c) {
   }
 }
 
-let linked = null;
-function linkPanel(id) {
-  if (linked) cards.get(linked).style.viewTransitionName = `card-${linked}`;
-  linked = id;
-  if (id) cards.get(id).style.viewTransitionName = 'none';
-  panel.style.viewTransitionName = id ? `card-${id}` : '';
-}
-
 function render(c) {
   panel.append(minimapEl);
   panel.dataset.d = c.difficulty;
@@ -445,14 +446,22 @@ function openCourse(id, { push = true, from = null } = {}) {
   const show = () => {
     render(c);
     if (!dialog.open) dialog.showModal();
-    linkPanel(id);
     showMiniMap(minimapEl, c);
     loadWeather(c);
   };
 
   if (!wasOpen && from && !from.hidden && canTransition()) {
+    nameCards(false);
+    from.style.viewTransitionName = 'active-card';
     dialog.classList.add('no-anim');
-    document.startViewTransition(show).finished.finally(() => dialog.classList.remove('no-anim'));
+    document.startViewTransition(() => {
+      from.style.viewTransitionName = '';
+      panel.style.viewTransitionName = 'active-card';
+      show();
+    }).finished.finally(() => {
+      dialog.classList.remove('no-anim');
+      panel.style.viewTransitionName = '';
+    });
   } else {
     show();
     if (wasOpen && !reduceMotion.matches) {
@@ -473,12 +482,19 @@ function closeDialog() {
   const card = cards.get(state.current);
   const done = () => {
     dialog.close();
-    linkPanel(null);
+    panel.style.viewTransitionName = '';
     state.current = null;
   };
   if (card && !card.hidden && isInViewport(card) && canTransition()) {
+    panel.style.viewTransitionName = 'active-card';
     dialog.classList.add('no-anim');
-    document.startViewTransition(done).finished.finally(() => dialog.classList.remove('no-anim'));
+    document.startViewTransition(() => {
+      done();
+      card.style.viewTransitionName = 'active-card';
+    }).finished.finally(() => {
+      dialog.classList.remove('no-anim');
+      card.style.viewTransitionName = '';
+    });
   } else done();
   if (new URLSearchParams(location.search).has('course')) history.replaceState(null, '', location.pathname + location.hash);
   document.title = 'Peoria Disc Golf · Every course in the Greater Peoria area';
