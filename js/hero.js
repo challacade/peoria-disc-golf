@@ -15,6 +15,7 @@ export function initHero() {
 
   const len = path.getTotalLength();
   trail.style.strokeDasharray = `${len}`;
+  trail.style.strokeDashoffset = `${len}`;
   let raf = 0;
   let timer = 0;
 
@@ -63,6 +64,7 @@ export function initHero() {
     cancelAnimationFrame(raf);
     clearTimeout(timer);
     hero.classList.remove('landed');
+    hero.classList.add('thrown');
     trail.classList.remove('fade');
     if (reduceMotion.matches) {
       place(1);
